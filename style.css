@@ -49,6 +49,12 @@ body {
     background-color: #656D78;
     outline: 0;
     color: #fff;
+
+}
+@media only screen and (max-width: 374px) {
+    .todo-task-input {
+        width: 70%;
+    }
 }
 .todo-task-input::placeholder {
     color: #ffffff;

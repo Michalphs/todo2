@@ -100,3 +100,66 @@ addTaskBtn.addEventListener('click', addNewTaskHandler);
 renderTasks(getTaskFromLS());
 
 
+class Task {
+    constructor(text, status = 'To Do') {
+      this.text = text;
+      this.status = status;
+    }
+    
+    getRootElement() {
+      const taskElement = document.createElement('li');
+      taskElement.textContent = `${this.text} - ${this.status}`;
+      console.log('elo');
+      return taskElement;
+     
+    }
+  }
+  
+  class List {
+    constructor(task, parentElement) {
+      this.Task = task;
+      this.tasks = [];
+      this.parentElement = parentElement;
+      this.render();
+    }
+    
+    addNewTask(text) {
+      this.tasks = [...this.tasks, new this.Task(text)];
+    }
+    
+    addNewTaskHandler(ev) {
+      const taskInput = ev.target.previousSibling;
+      this.addNewTask(taskInput.value);
+      taskInput.value = '';
+      this.render();
+    }
+    
+    getRootElement() {
+      const listContainer = document.createElement('div');
+      const newTaskInput = document.createElement('input');
+      const newTaskBtn = document.createElement('button');
+      const listElement = document.createElement('ul');
+      
+      newTaskBtn.textContent = 'Dodaj task';
+      newTaskBtn.addEventListener('click', this.addNewTaskHandler.bind(this));
+      
+      this.tasks.forEach(task => {
+        listElement.appendChild(task.getRootElement());
+      });
+      
+      listContainer.appendChild(newTaskInput);
+      listContainer.appendChild(newTaskBtn);
+      listContainer.appendChild(listElement);
+      
+      return listContainer;
+    }
+    
+    // render() {
+    //   this.parentElement.innerHTML = '';
+    //   this.parentElement.appendChild(this.getRootElement());
+    // }
+  }
+  
+  ////// USAGE
+  
+  const todoList = new List(Task, document.querySelector('body'));
