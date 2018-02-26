@@ -22,21 +22,11 @@ class List {
         btn.addEventListener('click', this.addNewTaskHandler.bind(this));
         document.addEventListener("DOMContentLoaded", this.renderTasks.bind(this));
     }
-    deleteTask(e) {
-        e.target.parentNode.remove();
-        this.tasks = [];
-        const tasky = document.querySelectorAll('.todo-text');
-        tasky.forEach(element => {
-            this.tasks.push(new this.Task(element.textContent));
-            
-           
-        });
-        this.saveTasksToLS(this.tasks);
-    }
     renderTasks() {
         const tasksFromLS = this.getTasksFromLS();
         tasksFromLS.forEach(task => {
-            this.addNewTask(task.text);
+            this.createTask(task.text);
+            this.saveTasksToArr(task.text);
         });
     }
     getTasksFromLS() {
@@ -45,6 +35,19 @@ class List {
     saveTasksToLS(data) {
         const newData = JSON.stringify(data);
         localStorage.setItem(TODO_LS_NAME, newData);
+    }
+    saveTasksToArr(text) {
+        this.tasks = [...this.tasks, new this.Task(text)];
+        this.saveTasksToLS(this.tasks);
+    }   
+    deleteTask(e) {
+        e.target.parentNode.remove();
+        this.tasks = [];
+        const tasky = document.querySelectorAll('.todo-text');
+        tasky.forEach(element => {
+            this.tasks.push(new this.Task(element.textContent));
+        });
+        this.saveTasksToLS(this.tasks);
     }
     createTaskBtn() {
         const taskBtn = document.createElement('button');
@@ -73,15 +76,11 @@ class List {
         taskElement.appendChild(taskBtn);
         todoList.appendChild(taskElement);
     }
-    addNewTask(text) {
-        this.tasks = [...this.tasks, new this.Task(text)];
-        this.saveTasksToLS(this.tasks);
-        this.createTask(text);
-    }
     addNewTaskHandler() {
         const todoInput = document.querySelector('.todo-task-input');
         if (todoInput.value !== '') {
-            this.addNewTask(todoInput.value);
+            this.createTask(todoInput.value);
+            this.saveTasksToArr(todoInput.value);
             todoInput.value = '';
             todoInput.style.border = '1px solid lime';
         } else {
