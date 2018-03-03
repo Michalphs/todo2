@@ -1,53 +1,55 @@
 const TODO_LS_NAME = "To do app";
-const todoList = document.querySelector('.todo-list');
-const addTaskBtn = document.querySelector('.todo-task-btn');
-const deleteTaskBtn = document.querySelectorAll('.btn-todo-item-delete');
+
 
 class Task {
     constructor(text) {
         this.text = text;
     }
-    getRootElement() {
-        const taskElement = document.createElement('li');
-        taskElement.classList.add('todo-text');
-        taskElement.textContent = `${this.text}`;
-        return taskElement;
-    }
 }
-
 class List {
-    constructor(task, btn) {
-        this.Task = task;
+    constructor() {
         this.tasks = [];
-        btn.addEventListener('click', this.addNewTaskHandler.bind(this));
-        document.addEventListener("DOMContentLoaded", this.renderTasks.bind(this));
+        this.getRootElements();
     }
-    renderTasks() {
-        const tasksFromLS = this.getTasksFromLS();
-        tasksFromLS.forEach(task => {
-            this.createTask(task.text);
-            this.saveTasksToArr(task.text);
-        });
+    // getTasks() {
+    //     const tasksFromLS = getTasksFromLS();
+    //     const renderElements = this.getRootElements();
+    //     console.log(tasksFromLS.length);
+    //     tasksFromLS.forEach(task => {
+
+    //         this.createTask(task.text);
+    //         this.saveTasksToArr(task.text);
+    //     });
+    // }
+    getRootElements() {
+        const todoContainer = document.querySelector('.todo-task');
+        const btnAddTask = document.createElement('button');
+        const inputAddTask = document.createElement('input');
+
+        inputAddTask.classList.add('todo-task-input');
+        inputAddTask.setAttribute('name', 'input-new-task');
+        inputAddTask.setAttribute('type', 'text');
+        inputAddTask.setAttribute('placeholder', 'Enter your new todo task');
+
+        btnAddTask.setAttribute('class', 'btn todo-task-btn fa fa-plus');
+        btnAddTask.addEventListener('click', this.addNewTaskElemnt.bind(this));
+
+        todoContainer.appendChild(inputAddTask);
+        todoContainer.appendChild(btnAddTask);
     }
-    getTasksFromLS() {
-        return JSON.parse(localStorage.getItem(TODO_LS_NAME)) || [];
-    }
-    saveTasksToLS(data) {
-        const newData = JSON.stringify(data);
-        localStorage.setItem(TODO_LS_NAME, newData);
-    }
+
     saveTasksToArr(text) {
-        this.tasks = [...this.tasks, new this.Task(text)];
-        this.saveTasksToLS(this.tasks);
-    }   
+        this.tasks = [...this.tasks, new Task(text)];
+        saveTasksToLS(this.tasks);
+    }
     deleteTask(e) {
         e.target.parentNode.remove();
         this.tasks = [];
         const tasky = document.querySelectorAll('.todo-text');
         tasky.forEach(element => {
-            this.tasks.push(new this.Task(element.textContent));
+            this.tasks.push(new Task(element.textContent));
         });
-        this.saveTasksToLS(this.tasks);
+        saveTasksToLS(this.tasks);
     }
     createTaskBtn() {
         const taskBtn = document.createElement('button');
@@ -68,19 +70,21 @@ class List {
         return taskElement;
     }
     createTask(value) {
+        const todoList = document.querySelector('.todo-list');
         const taskElement = this.createTaskElement();
         const taskText = this.createTaskText(value);
         const taskBtn = this.createTaskBtn();
+        const addTaskToLS = this.saveTasksToArr(value);
 
         taskElement.appendChild(taskText);
         taskElement.appendChild(taskBtn);
         todoList.appendChild(taskElement);
     }
-    addNewTaskHandler() {
+    addNewTaskElemnt() {
         const todoInput = document.querySelector('.todo-task-input');
+
         if (todoInput.value !== '') {
             this.createTask(todoInput.value);
-            this.saveTasksToArr(todoInput.value);
             todoInput.value = '';
             todoInput.style.border = '1px solid lime';
         } else {
@@ -89,4 +93,17 @@ class List {
     }
 }
 
-const newToDo = new List(Task, addTaskBtn);
+function getTasksFromLS() {
+    return JSON.parse(localStorage.getItem(TODO_LS_NAME)) || [];
+}
+
+function saveTasksToLS(data) {
+    const newData = JSON.stringify(data);
+    localStorage.setItem(TODO_LS_NAME, newData);
+}
+const newTodo = new List();
+
+const tasksFromLS = getTasksFromLS();
+tasksFromLS.forEach(task => {
+    newTodo.createTask(task.text);
+});
